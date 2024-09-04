@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+
+    <h1>Registration</h1>
+
+    <!-- <form action="/main/register/" method="POST"> -->
+        <input type="text" name="name" id="name" placeholder="Name" autocomplete="off">
+        <input type="text" name="contact" id="contact" placeholder="Contact" autocomplete="off">
+        <input type="text" name="email" id="email" placeholder="Email" autocomplete="off">
+        <input type="password" name="password" id="password" placeholder="Password" autocomplete="off">
+        <button id="register_button">Submit</button>
+    <!-- </form> -->
+</body>
+<script>
+    const name = document.getElementById("name"),
+          contact = document.getElementById("contact"),
+          email = document.getElementById("email"),
+          password = document.getElementById("password"),
+          register_button = document.getElementById("register_button");
+    
+    function validateAndSend(){
+        const validate_condition = (name.value != "") && (contact.value != "") && (contact.value.length == 10) && (email.value != "") && (email.value.includes("@")) && (password.value != "");
+
+        if(validate_condition){
+            const option = {
+                    method : 'POST',
+                    body : JSON.stringify({
+                        name : name.value,
+                        contact : contact.value,
+                        email : email.value,
+                        password : password.value,
+                    }),
+                    headers : new Headers({
+                        'Content-Type' : 'application/json'
+                    }),
+            };
+
+            fetch('/main/register/',option)
+            .then(response=>response.json())
+            .then((response) => {
+                console.log(response)
+
+                if(response.status_code == 503){
+                    // show Error
+                    alert("Error: Registration Error");
+                }else{
+                    // Redirect after success
+                    location.href = `${location.origin}/main/memes/`;
+                }
+
+                name.value = "";
+                contact.value = "";
+                email.value = "";
+                password.value = "";
+            })
+            .catch(err=>console.log("Error : ",err));
+        }else{
+            name.value = "";
+            contact.value = "";
+            email.value = "";
+            password.value = "";
+            
+            alert("Error : All field are required");
+        }
+    }
+    
+    register_button.addEventListener("click",validateAndSend);
+</script>
+</html>

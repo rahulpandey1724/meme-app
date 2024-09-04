@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+
+    <h1>Login</h1>
+
+    <!-- <form action="/main/login/" method="POST"> -->
+        <input type="text" name="email" id="email" placeholder="Email" autocomplete="off">
+        <input type="password" name="password" id="password" placeholder="Password" autocomplete="off">
+        <button id="btn">Submit</button>
+    <!-- </form> -->
+</body>
+<script>
+    const email = document.getElementById('email'),
+          password = document.getElementById('password'),
+          register_button = document.getElementById("btn");
+    
+    function validateAndSend(){
+        
+        if((email.value != "") && (email.value.includes("@")) && (password.value != "")){
+            const options = {
+                method : 'POST',
+                body : JSON.stringify({
+                    email : email.value,
+                    password : password.value
+                }),
+                headers : new Headers({
+                    'Content-Type' : 'application/json'
+                })
+            };
+
+            fetch('/main/login/',options)
+            .then(response=>response.json())
+            .then((response) => {
+                console.log(response)
+
+                if(response.status_code == 503){
+                    // show Error
+                    alert("Error: Registration Error");
+                }else{
+                    // Redirect after success
+                    location.href = `${location.origin}/main/memes/`;
+                }
+
+                email.value = "";
+                password.value = "";
+            })
+            .catch(err=>console.log("Error : ",err));
+        }else{
+            email.value = "";
+            password.value = "";
+            
+            alert("Error");
+        }
+    }
+    
+    register_button.addEventListener("click",validateAndSend)
+</script>
+</html>
